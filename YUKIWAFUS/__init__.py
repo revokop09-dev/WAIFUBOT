@@ -41,4 +41,7 @@ app = Client(
     bot_token=BOT_TOKEN
 )
 
-LOGGER.info("Telegram Client (app) successfully initialized in package core!")
+# Force Python to use the real core LOGGER object directly
+import YUKIWAFUS
+
+YUKIWAFUS.LOGGER.info(f"Modules found: {ALL_MODULES}")
