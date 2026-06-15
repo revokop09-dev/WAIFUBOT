@@ -1,15 +1,44 @@
 import logging
 import os
+from pyrogram import Client
 
-# 1. This configures how your logs look in the terminal
+# 1. Setup the standard logging configuration properly
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO
 )
 
-# 2. This creates the TRUE logging object that your modules are trying to import
 LOGGER = logging.getLogger("YUKIWAFUS")
 
-# 3. We renamed the helper function so it doesn't overwrite the LOGGER variable!
+# Helper function for modules that try to fetch custom sub-loggers
 def get_custom_logger(name: str):
     return logging.getLogger(name)
+
+
+# 2. Load API credentials from Environment Variables (Coolify) or config file
+API_ID = os.getenv("API_ID")
+API_HASH = os.getenv("API_HASH")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+
+# Fallback check if you use a local config.py file instead of env variables
+if not API_ID or not API_HASH or not BOT_TOKEN:
+    try:
+        import config
+        API_ID = getattr(config, "API_ID", None)
+        API_HASH = getattr(config, "API_HASH", None)
+        BOT_TOKEN = getattr(config, "BOT_TOKEN", None)
+    except ImportError:
+        LOGGER.error("Could not find API_ID, API_HASH, or BOT_TOKEN in Environment or config.py!")
+
+
+# 3. Setup and initialize the Telegram Bot Client (app)
+LOGGER.info("Initializing Telegram Client (app)...")
+
+app = Client(
+    name="YUKIWAFUS",
+    api_id=int(API_ID) if API_ID else None,
+    api_hash=API_HASH,
+    bot_token=BOT_TOKEN
+)
+
+LOGGER.info("Telegram Client (app) successfully initialized in package core!")
